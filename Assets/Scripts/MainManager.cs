@@ -12,11 +12,16 @@ public class MainManager : MonoBehaviour
 
     public Text ScoreText;
     public GameObject GameOverText;
+    public Text playerNameText;
     
     private bool m_Started = false;
     private int m_Points;
     
     private bool m_GameOver = false;
+
+    private string playerName;
+    
+    public Text HighScoreText;
 
     
     // Start is called before the first frame update
@@ -36,7 +41,32 @@ public class MainManager : MonoBehaviour
                 brick.onDestroyed.AddListener(AddPoint);
             }
         }
+
+        playerName = DataManager.Instance.playerName;
+        playerNameText.text = DataManager.Instance.playerName;
+
+
+       // if (DataManager.Instance.LoadHighScoreFromJson() > 0)
+       // {
+            HighScoreText.text = $"Best Score:{DataManager.Instance.LoadHighScorePlayerNameFromJson()} :{DataManager.Instance.LoadHighScoreFromJson()}";
+      //  }
+      //  else
+       // {
+      //      HighScoreText.text = $"Best Score:{DataManager.Instance.LoadHighScorePlayerNameFromJson()}";
+
+     //   }
+
+        
+
+
     }
+
+   // private void SetPlayerName()
+   // {
+  //      playerName = DataManager.Instance.LoadPlayerNameFromJson();
+  //      playerNameText.text = $"Player Name: {playerName}";
+   // }
+
 
     private void Update()
     {
@@ -72,5 +102,17 @@ public class MainManager : MonoBehaviour
     {
         m_GameOver = true;
         GameOverText.SetActive(true);
+        if (m_Points > DataManager.Instance.LoadHighScoreFromJson())
+        {
+            DataManager.Instance.SaveHighScoreToJson(m_Points);
+            DataManager.Instance.SaveHighScorePlayerNameToJson(playerName);
+            Debug.Log($"New High Score:{playerName} {m_Points}");
+            
+            
+            HighScoreText.text = $"Best Score:{playerName}{DataManager.Instance.LoadHighScoreFromJson()}";
+
+        };
+        
+
     }
 }
